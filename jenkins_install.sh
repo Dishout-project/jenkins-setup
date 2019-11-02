@@ -6,6 +6,24 @@ function jenkins_cli_setup {
     curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
 }
 
+function install_plugins () {
+    filepath=$1
+    absolute_file="$( cd "${filepath%/*}" && pwd )"/"${filepath##*/}"
+
+    if [ ! -d '/usr/local/bin' ]; then
+        mkdir -p /usr/local/bin
+    fi
+    if [ ! -f /usr/local/bin/jenkins-support ] && [ ! -f /usr/local/bin/install-plugins.sh ]
+        curl -L https://raw.githubusercontent.com/jenkinsci/docker/master/install-plugins.sh -o /usr/local/bin/install-plugins.sh
+        curl -L https://raw.githubusercontent.com/jenkinsci/docker/master/jenkins-support -o /usr/local/bin/jenkins-support
+        chmod 700 /usr/local/bin/install-plugins.sh
+        chmod 700 /usr/local/bin/jenkins-support
+    fi
+    
+    /usr/local/bin/install-plugins.sh $absolute_file
+    
+}
+
 if [ "$EUID" -ne 0 ]
     then echo "Please run script as root"
     exit

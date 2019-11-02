@@ -32,7 +32,7 @@ fi
 if [ ! -d '/var/lib/jenkins' ]; then
     if [ ! -x "$(command -v java)" ]; then
         apt-get update
-        apt-get install -y openjdk-8-jre
+        apt-get install -y openjdk-8-jdk
     fi
     if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
         wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
@@ -45,4 +45,4 @@ if [ ! -d '/var/lib/jenkins' ]; then
     jenkins_cli_setup
 fi
 
-
+install_plugins "$1"

@@ -2,6 +2,10 @@
 
 export DISTRO=$(sed -n '/\bID\b/p' /etc/os-release | awk -F= '/^ID/{print $2}' | tr -d '"')
 
+function jenkins_cli_setup {
+    curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+}
+
 if [ "$EUID" -ne 0 ]
     then echo "Please run script as root"
     exit
@@ -19,6 +23,4 @@ if [ ! -d '/var/lib/jenkins' ]; then
     jenkins_cli_setup
 fi
 
-function jenkins_cli_setup {
-    curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
-}
+

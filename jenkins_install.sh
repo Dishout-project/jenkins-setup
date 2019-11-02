@@ -15,6 +15,7 @@ if [ ! -d '/var/lib/jenkins' ]; then
     if [ ! -x "$(command -v java)" ]; then
         apt-get update
         apt-get install -y openjdk-8-jre
+    fi
     if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
         wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
         sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'

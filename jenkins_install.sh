@@ -13,7 +13,7 @@ function install_plugins () {
     if [ ! -d '/usr/local/bin' ]; then
         mkdir -p /usr/local/bin
     fi
-    if [ ! -f /usr/local/bin/jenkins-support ] && [ ! -f /usr/local/bin/install-plugins.sh ]
+    if [ ! -f /usr/local/bin/jenkins-support ] && [ ! -f /usr/local/bin/install-plugins.sh ]; then
         curl -L https://raw.githubusercontent.com/jenkinsci/docker/master/install-plugins.sh -o /usr/local/bin/install-plugins.sh
         curl -L https://raw.githubusercontent.com/jenkinsci/docker/master/jenkins-support -o /usr/local/bin/jenkins-support
         chmod 700 /usr/local/bin/install-plugins.sh

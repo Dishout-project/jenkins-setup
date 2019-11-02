@@ -12,7 +12,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 if [ ! -d '/var/lib/jenkins' ]; then
-    if [ $DISTRO == "ubuntu" || $DISTRO == "debian" || $DISTRO == "raspbian" ]; then
+    if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
         wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
         sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
         sudo apt-get update

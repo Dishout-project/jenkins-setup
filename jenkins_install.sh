@@ -20,5 +20,5 @@ if [ ! -d '/var/lib/jenkins' ]; then
 fi
 
 function jenkins_cli_setup {
-    curl localhost:/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+    curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
 }

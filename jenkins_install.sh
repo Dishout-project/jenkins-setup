@@ -20,7 +20,11 @@ function install_plugins () {
         chmod 700 /usr/local/bin/jenkins-support
     fi
     
-    /usr/local/bin/install-plugins.sh $absolute_file
+    #exporting ENV Variable for install-plugins script
+    export JENKINS_UC='https://updates.jenkins.io'
+    export JENKINS_HOME=/var/lib/jenkins
+    export REF=$JENKINS_HOME
+    /usr/local/bin/install-plugins.sh < $absolute_file
     
 }
 

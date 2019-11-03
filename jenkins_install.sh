@@ -3,12 +3,12 @@
 export DISTRO=$(sed -n '/\bID\b/p' /etc/os-release | awk -F= '/^ID/{print $2}' | tr -d '"')
 
 function jenkins_cli_setup {
+    echo "Downloading jenkins-cli jar from jenkins server"
     curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
 }
 
 function install_plugins () {
-    filepath=$1
-    absolute_file="$( cd "${filepath%/*}" && pwd )"/"${filepath##*/}"
+    pluginfile=$(pwd)/$1
 
     if [ ! -d '/usr/local/bin' ]; then
         mkdir -p /usr/local/bin
@@ -24,7 +24,8 @@ function install_plugins () {
     export JENKINS_UC='https://updates.jenkins.io'
     export JENKINS_HOME=/var/lib/jenkins
     export REF=$JENKINS_HOME
-    /usr/local/bin/install-plugins.sh < $absolute_file
+    echo "Installing plugins"
+    /usr/local/bin/install-plugins.sh < $pluginfile
     
 }
 
@@ -35,10 +36,12 @@ fi
 
 if [ ! -d '/var/lib/jenkins' ]; then
     if [ ! -x "$(command -v java)" ]; then
+        echo "Installing pre-requisite: Java"
         apt-get update
         apt-get install -y openjdk-8-jdk
     fi
     if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
+        echo "Installing Jenkins"
         wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
         sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
         sudo apt-get update

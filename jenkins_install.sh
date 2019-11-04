@@ -3,7 +3,8 @@
 export DISTRO=$(sed -n '/\bID\b/p' /etc/os-release | awk -F= '/^ID/{print $2}' | tr -d '"')
 
 function jenkins_cli_setup {
-    echo "Downloading jenkins-cli jar from jenkins server"
+    echo -e "\e[92mDownloading jenkins-cli jar from jenkins server\e[0m"
+    sleep 5
     curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
 }
 
@@ -24,7 +25,7 @@ function install_plugins () {
     export JENKINS_UC='https://updates.jenkins.io'
     export JENKINS_HOME=/var/lib/jenkins
     export REF=$JENKINS_HOME
-    echo "Installing plugins"
+    echo -e "\e[92mInstalling plugins\e[0m"
     /usr/local/bin/install-plugins.sh < $pluginfile
     
 }

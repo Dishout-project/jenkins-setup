@@ -1,5 +1,5 @@
 #!/bin/bash
-
+source files/setenv.sh
 export DISTRO=$(sed -n '/\bID\b/p' /etc/os-release | awk -F= '/^ID/{print $2}' | tr -d '"')
 
 function jenkins_cli_setup {
@@ -21,10 +21,6 @@ function install_plugins () {
         chmod 700 /usr/local/bin/jenkins-support
     fi
     
-    #exporting ENV Variable for install-plugins script
-    export JENKINS_UC='https://updates.jenkins.io'
-    export JENKINS_HOME=/var/lib/jenkins
-    export REF=$JENKINS_HOME
     echo -e "\e[92mInstalling plugins\e[0m"
     /usr/local/bin/install-plugins.sh < $pluginfile
     
@@ -43,14 +39,24 @@ if [ ! -d '/var/lib/jenkins' ]; then
     fi
     #if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
     #    echo "Installing Jenkins"
-    #    wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
-    #    sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
-    #    sudo apt-get update
-    #    sudo apt-get install -y jenkins
+    #    wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key |  apt-key add -
+    #     sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+    #     apt-get update
+    #     apt-get install -y jenkins
     #fi
-    curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o jenkins.war
+    echo "Creating jenkins user"
+    useradd jenkins && usermod --shell /bin/bash jenkins 
+    mkdir -p $JENKINS_WAR
+    chmod 755 $JENKINS_WAR
 
-
+    echo "Downloading latest jenkins.war"
+    curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR/jenkins.war
+    mkdir -p $JENKINS_HOME
+    
+    echo "Creating systemd service"
+    mv $(pwd)/files/jenkins.service /etc/systemd/system
+    systemctl daemon-reload
+    
     systemctl start jenkins
     jenkins_cli_setup
 fi

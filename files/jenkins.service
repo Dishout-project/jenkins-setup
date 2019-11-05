@@ -1,0 +1,10 @@
+[Unit]
+Description=Jenkins
+
+[Service]
+User=jenkins
+WorkingDirectory=/usr/share/jenkins
+ExecStart=/usr/bin/java -Djenkins.install.runSetupWizard=false -jar /usr/share/jenkins/jenkins.war
+
+[Install]
+WantedBy=multi.user.target

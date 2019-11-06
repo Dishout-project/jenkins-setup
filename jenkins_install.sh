@@ -15,8 +15,8 @@ Description=Jenkins
 
 [Service]
 User=jenkins
-WorkingDirectory=$JENKINS_WAR
-ExecStart=/usr/bin/java -Djenkins.install.runSetupWizard=false -jar $JENKINS_WAR/jenkins.war --httpPort=$HTTP_PORT
+WorkingDirectory=$JENKINS_WAR_DIR
+ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -jar $JENKINS_WAR --httpPort=$HTTP_PORT
 
 
 [Install]
@@ -63,7 +63,7 @@ if [ ! -d '/var/lib/jenkins' ]; then
     #fi
     echo "Creating jenkins user"
     useradd jenkins && usermod --shell /bin/bash jenkins
-    group add jenkins
+    groupadd jenkins
     usermod -a -G jenkins jenkins
     mkdir -p $JENKINS_WAR
     chmod 755 $JENKINS_WAR

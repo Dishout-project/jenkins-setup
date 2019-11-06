@@ -1,5 +1,6 @@
 #!/bin/bash
 export JAVA_HOME=$(which java)
+export JENKINS_WAR_DIR=/usr/share/jenkins
 export JENKINS_WAR=/usr/share/jenkins/jenkins.war
 export JENKINS_UC='https://updates.jenkins.io'
 export JENKINS_HOME=/var/lib/jenkins

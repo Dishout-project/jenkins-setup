@@ -1,11 +1,28 @@
 #!/bin/bash
 source files/setenv.sh
-export DISTRO=$(sed -n '/\bID\b/p' /etc/os-release | awk -F= '/^ID/{print $2}' | tr -d '"')
 
 function jenkins_cli_setup {
     echo -e "\e[92mDownloading jenkins-cli jar from jenkins server\e[0m"
     sleep 5
     curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+}
+
+function generate_service_file() {
+    # generates systemd service file for jenkins
+cat << EOF > /etc/systemd/system/jenkins.service
+[Unit]
+Description=Jenkins
+
+[Service]
+User=jenkins
+WorkingDirectory=$JENKINS_WAR
+ExecStart=/usr/bin/java -Djenkins.install.runSetupWizard=false -jar $JENKINS_WAR/jenkins.war --httpPort=$HTTP_PORT
+
+
+[Install]
+WantedBy=multi.user.target
+EOF
+
 }
 
 function install_plugins () {
@@ -45,16 +62,20 @@ if [ ! -d '/var/lib/jenkins' ]; then
     #     apt-get install -y jenkins
     #fi
     echo "Creating jenkins user"
-    useradd jenkins && usermod --shell /bin/bash jenkins 
+    useradd jenkins && usermod --shell /bin/bash jenkins
+    group add jenkins
+    usermod -a -G jenkins jenkins
     mkdir -p $JENKINS_WAR
     chmod 755 $JENKINS_WAR
+    chown jenkins:jenkins $JENKINS_WAR
 
     echo "Downloading latest jenkins.war"
     curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR/jenkins.war
     mkdir -p $JENKINS_HOME
     
     echo "Creating systemd service"
-    mv $(pwd)/files/jenkins.service /etc/systemd/system
+    # mv $(pwd)/files/jenkins.service /etc/systemd/system
+    generate_service_file
     systemctl daemon-reload
     
     systemctl start jenkins

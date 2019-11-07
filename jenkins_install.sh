@@ -16,8 +16,7 @@ Description=Jenkins
 [Service]
 User=jenkins
 WorkingDirectory=$JENKINS_WAR_DIR
-ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -jar $JENKINS_WAR --httpPort=$HTTP_PORT
-
+ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -jar $JENKINS_WAR --httpPort=$HTTP_PORT --log-file=$JENKINS_LOG
 
 [Install]
 WantedBy=multi.user.target
@@ -61,6 +60,8 @@ if [ ! -d '/var/lib/jenkins' ]; then
     #     apt-get update
     #     apt-get install -y jenkins
     #fi
+    
+    source files/setenv.sh
     echo "Creating jenkins user"
     useradd jenkins && usermod --shell /bin/bash jenkins
     groupadd jenkins

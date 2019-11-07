@@ -1,5 +1,4 @@
 #!/bin/bash
-source files/setenv.sh
 
 function jenkins_cli_setup {
     echo -e "\e[92mDownloading jenkins-cli jar from jenkins server\e[0m"
@@ -40,6 +39,25 @@ function install_plugins () {
     echo -e "\e[92mInstalling plugins\e[0m"
     /usr/local/bin/install-plugins.sh < $pluginfile
     
+}
+
+function install_dependencies () {
+    count=0
+    updated=false
+    dependencies=(java wget unzip)
+    for dep in ${dependencies[@]}; do 
+        if [ ! -x "$(command -v $dep)" ]; then
+            while [ $updated -ne true ]; do
+                if [[ $dep -eq $dependencies[$count] ]]; then
+                    apt-get update
+                    $updated=true
+                else
+                    $count=$count+1
+                fi
+            echo "Installing pre-requisite: $dep"
+            apt-get install $dep
+        fi
+    done
 }
 
 if [ "$EUID" -ne 0 ]

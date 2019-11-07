@@ -47,7 +47,7 @@ function install_dependencies () {
     for dep in ${dependencies[@]}; do 
         if [ ! -x "$(command -v $dep)" ]; then
             echo "Installing pre-requisite: $dep"
-            if [ $dep -eq 'java' ]; then
+            if [ $dep == 'java' ]; then
                 apt-get install -y openjdk-8-jdk
             fi
             apt-get install -y $dep

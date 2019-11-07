@@ -15,7 +15,7 @@ Description=Jenkins
 [Service]
 User=jenkins
 WorkingDirectory=$JENKINS_WAR_DIR
-ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -jar $JENKINS_WAR --httpPort=$HTTP_PORT --log-file=$JENKINS_LOG
+ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -jar $JENKINS_WAR --httpPort=$HTTP_PORT --logfile=$JENKINS_LOG
 
 [Install]
 WantedBy=multi.user.target
@@ -42,20 +42,15 @@ function install_plugins () {
 }
 
 function install_dependencies () {
-    count=0
-    updated=false
     dependencies=(java wget unzip)
+    apt-get update
     for dep in ${dependencies[@]}; do 
         if [ ! -x "$(command -v $dep)" ]; then
-            while [ $updated -ne true ]; do
-                if [[ $dep -eq $dependencies[$count] ]]; then
-                    apt-get update
-                    $updated=true
-                else
-                    $count=$count+1
-                fi
             echo "Installing pre-requisite: $dep"
-            apt-get install $dep
+            if [ $dep -eq 'java' ]; then
+                apt-get install -y openjdk-8-jdk
+            fi
+            apt-get install -y $dep
         fi
     done
 }
@@ -66,11 +61,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 if [ ! -d '/var/lib/jenkins' ]; then
-    if [ ! -x "$(command -v java)" ]; then
-        echo "Installing pre-requisite: Java"
-        apt-get update
-        apt-get install -y openjdk-8-jdk
-    fi
+    install_dependencies
     #if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
     #    echo "Installing Jenkins"
     #    wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key |  apt-key add -
@@ -82,14 +73,15 @@ if [ ! -d '/var/lib/jenkins' ]; then
     source files/setenv.sh
     echo "Creating jenkins user"
     useradd jenkins && usermod --shell /bin/bash jenkins
-    groupadd jenkins
     usermod -a -G jenkins jenkins
     mkdir -p $JENKINS_WAR
     chmod 755 $JENKINS_WAR
     chown jenkins:jenkins $JENKINS_WAR
+    mkdir -p $JENKINS_LOG_DIR
+    touch $JENKINS_LOG_DIR/jenkins.log
 
     echo "Downloading latest jenkins.war"
-    curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR/jenkins.war
+    curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
     mkdir -p $JENKINS_HOME
     
     echo "Creating systemd service"

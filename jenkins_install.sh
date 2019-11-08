@@ -61,7 +61,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 if [ ! -d '/var/lib/jenkins' ]; then
-    install_dependencies
+    install_dependencieswar
     #if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
     #    echo "Installing Jenkins"
     #    wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key |  apt-key add -
@@ -81,7 +81,8 @@ if [ ! -d '/var/lib/jenkins' ]; then
     touch $JENKINS_LOG_DIR/jenkins.log
 
     echo "Downloading latest jenkins.war"
-    curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
+    #curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
+    wget -O $JENKINS_WAR http://updates.jenkins-ci.org/latest/jenkins.war
     mkdir -p $JENKINS_HOME
     
     echo "Creating systemd service"

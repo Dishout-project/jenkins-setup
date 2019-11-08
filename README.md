@@ -10,4 +10,3 @@ sudo ./jenkins_install.sh plugins.txt
 
 ## Future:
 This repository will contain the currently present local installation as well as a Docker based install.
-

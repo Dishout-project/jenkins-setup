@@ -61,7 +61,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 if [ ! -d '/var/lib/jenkins' ]; then
-    install_dependencieswar
+    install_dependencies
     #if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
     #    echo "Installing Jenkins"
     #    wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key |  apt-key add -

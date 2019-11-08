@@ -97,3 +97,4 @@ if [ ! -d '/var/lib/jenkins' ]; then
 fi
 
 install_plugins "$1"
+systemctl restart jenkins

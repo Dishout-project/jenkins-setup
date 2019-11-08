@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export DISTRO=$(sed -n '/\bID\b/p' /etc/os-release | awk -F= '/^ID/{print $2}' | tr -d '"')
+export OS=$(uname -s)
+
 function jenkins_cli_setup {
     echo -e "\e[92mDownloading jenkins-cli jar from jenkins server\e[0m"
     sleep 5
@@ -62,13 +65,6 @@ fi
 
 if [ ! -d '/var/lib/jenkins' ]; then
     install_dependencies
-    #if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
-    #    echo "Installing Jenkins"
-    #    wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key |  apt-key add -
-    #     sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
-    #     apt-get update
-    #     apt-get install -y jenkins
-    #fi
     
     source files/setenv.sh
     echo "Creating jenkins user"
@@ -83,12 +79,10 @@ if [ ! -d '/var/lib/jenkins' ]; then
     echo "Downloading latest jenkins.war"
     curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
     chown -R jenkins:jenkins $JENKINS_WAR_DIR
-    #wget -O $JENKINS_WAR http://updates.jenkins-ci.org/latest/jenkins.war
     mkdir -p $JENKINS_HOME
     chown -R jenkins:jenkins $JENKINS_HOME
     
     echo "Creating systemd service"
-    # mv $(pwd)/files/jenkins.service /etc/systemd/system
     generate_service_file
     systemctl daemon-reload
     

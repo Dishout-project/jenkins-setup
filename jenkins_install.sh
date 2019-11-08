@@ -76,13 +76,13 @@ if [ ! -d '/var/lib/jenkins' ]; then
     usermod -a -G jenkins jenkins
     mkdir -p $JENKINS_WAR_DIR
     chmod 755 $JENKINS_WAR_DIR
-    chown jenkins:jenkins $JENKINS_WAR_DIR
     mkdir -p $JENKINS_LOG_DIR
     touch $JENKINS_LOG_DIR/jenkins.log
     chown -R jenkins:jenkins $JENKINS_LOG_DIR
 
     echo "Downloading latest jenkins.war"
     curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
+    chown -R jenkins:jenkins $JENKINS_WAR_DIR
     #wget -O $JENKINS_WAR http://updates.jenkins-ci.org/latest/jenkins.war
     mkdir -p $JENKINS_HOME
     

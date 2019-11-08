@@ -1,11 +1,29 @@
 #!/bin/bash
 
 export DISTRO=$(sed -n '/\bID\b/p' /etc/os-release | awk -F= '/^ID/{print $2}' | tr -d '"')
+export OS=$(uname -s)
 
 function jenkins_cli_setup {
     echo -e "\e[92mDownloading jenkins-cli jar from jenkins server\e[0m"
     sleep 5
     curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
+}
+
+function generate_service_file() {
+    # generates systemd service file for jenkins
+cat << EOF > /etc/systemd/system/jenkins.service
+[Unit]
+Description=Jenkins
+
+[Service]
+User=jenkins
+WorkingDirectory=$JENKINS_WAR_DIR
+ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENKINS_HOME -jar $JENKINS_WAR --httpPort=$HTTP_PORT --logfile=$JENKINS_LOG
+
+[Install]
+WantedBy=multi.user.target
+EOF
+
 }
 
 function install_plugins () {
@@ -21,13 +39,23 @@ function install_plugins () {
         chmod 700 /usr/local/bin/jenkins-support
     fi
     
-    #exporting ENV Variable for install-plugins script
-    export JENKINS_UC='https://updates.jenkins.io'
-    export JENKINS_HOME=/var/lib/jenkins
-    export REF=$JENKINS_HOME
     echo -e "\e[92mInstalling plugins\e[0m"
     /usr/local/bin/install-plugins.sh < $pluginfile
     
+}
+
+function install_dependencies () {
+    dependencies=(java wget unzip)
+    apt-get update
+    for dep in ${dependencies[@]}; do 
+        if [ ! -x "$(command -v $dep)" ]; then
+            echo "Installing pre-requisite: $dep"
+            if [ $dep == 'java' ]; then
+                apt-get install -y openjdk-8-jdk
+            fi
+            apt-get install -y $dep
+        fi
+    done
 }
 
 if [ "$EUID" -ne 0 ]
@@ -36,21 +64,31 @@ if [ "$EUID" -ne 0 ]
 fi
 
 if [ ! -d '/var/lib/jenkins' ]; then
-    if [ ! -x "$(command -v java)" ]; then
-        echo "Installing pre-requisite: Java"
-        apt-get update
-        apt-get install -y openjdk-8-jdk
-    fi
-    if [ $DISTRO == "ubuntu" ] || [ $DISTRO == "debian" ] || [ $DISTRO == "raspbian" ]; then
-        echo "Installing Jenkins"
-        wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
-        sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
-        sudo apt-get update
-        sudo apt-get install -y jenkins
-    fi
+    install_dependencies
+    
+    source files/setenv.sh
+    echo "Creating jenkins user"
+    useradd jenkins && usermod --shell /bin/bash jenkins
+    usermod -a -G jenkins jenkins
+    mkdir -p $JENKINS_WAR_DIR
+    chmod 755 $JENKINS_WAR_DIR
+    mkdir -p $JENKINS_LOG_DIR
+    touch $JENKINS_LOG_DIR/jenkins.log
+    chown -R jenkins:jenkins $JENKINS_LOG_DIR
 
+    echo "Downloading latest jenkins.war"
+    curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
+    chown -R jenkins:jenkins $JENKINS_WAR_DIR
+    mkdir -p $JENKINS_HOME
+    chown -R jenkins:jenkins $JENKINS_HOME
+    
+    echo "Creating systemd service"
+    generate_service_file
+    systemctl daemon-reload
+    
     systemctl start jenkins
     jenkins_cli_setup
 fi
 
 install_plugins "$1"
+systemctl restart jenkins

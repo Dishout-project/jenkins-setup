@@ -85,6 +85,7 @@ if [ ! -d '/var/lib/jenkins' ]; then
     chown -R jenkins:jenkins $JENKINS_WAR_DIR
     #wget -O $JENKINS_WAR http://updates.jenkins-ci.org/latest/jenkins.war
     mkdir -p $JENKINS_HOME
+    chown -R jenkins:jenkins $JENKINS_HOME
     
     echo "Creating systemd service"
     # mv $(pwd)/files/jenkins.service /etc/systemd/system

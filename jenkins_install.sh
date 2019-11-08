@@ -15,7 +15,7 @@ Description=Jenkins
 [Service]
 User=jenkins
 WorkingDirectory=$JENKINS_WAR_DIR
-ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -jar $JENKINS_WAR --httpPort=$HTTP_PORT --logfile=$JENKINS_LOG
+ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENKINS_HOME -jar $JENKINS_WAR --httpPort=$HTTP_PORT --logfile=$JENKINS_LOG
 
 [Install]
 WantedBy=multi.user.target

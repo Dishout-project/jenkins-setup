@@ -79,6 +79,7 @@ if [ ! -d '/var/lib/jenkins' ]; then
     chown jenkins:jenkins $JENKINS_WAR
     mkdir -p $JENKINS_LOG_DIR
     touch $JENKINS_LOG_DIR/jenkins.log
+    chown jenkins:jenkins $JENKINS_LOG_DIR
 
     echo "Downloading latest jenkins.war"
     curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR

@@ -57,8 +57,8 @@ function install_dependencies () {
     done
 }
 
-if [ "$EUID" -ne 0 ]
-    then echo "Please run script as root"
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run script as root"
     exit
 fi
 

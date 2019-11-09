@@ -6,6 +6,7 @@ echo "Performing uninstall of Jenkins"
 sleep 3
 echo "Stopping jenkins service"
 systemctl stop jenkins
+systemctl disable jenkins
 echo "Removing jenkins directories and files"
 rm -rf $JENKINS_HOME
 rm -rf $JENKINS_LOG_DIR
@@ -15,9 +16,9 @@ rm /usr/local/bin/install-plugins.sh
 echo "Removing systemd service"
 rm /etc/systemd/system/jenkins.service
 systemctl daemon-reload
+systemctl reset-failed
 echo "Removing jenkins user and group"
 userdel jenkins
-groupdel jenkins
 
 if [ ! -d $JENKINS_HOME ] && [ ! -d $JENKINS_LOG_DIR ] && [ ! -d $JENKINS_WAR_DIR ] && [ ! -f "/etc/systemd/system/jenkins.service" ]; then
     echo "Jenkins successfully uninstalled"

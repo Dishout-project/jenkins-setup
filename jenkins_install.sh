@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export DISTRO=$(sed -n '/\bID\b/p' /etc/os-release | awk -F= '/^ID/{print $2}' | tr -d '"')
 export OS=$(uname -s)
 
 function jenkins_cli_setup {
@@ -61,6 +60,16 @@ function install_dependencies () {
 if [ "$EUID" -ne 0 ]
     then echo "Please run script as root"
     exit
+fi
+
+if [ $OS != "Linux" ]; then
+    echo "This script currently does not support $OS"
+    exit
+else
+    if [ ! -f "/etc/debian_version" ]; then
+        echo "This script currently does not support non-debian distributions"
+        exit
+    fi
 fi
 
 if [ ! -d '/var/lib/jenkins' ]; then

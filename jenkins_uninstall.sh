@@ -3,6 +3,10 @@
 source files/setenv.sh
 
 echo "Performing uninstall of Jenkins"
+sleep 3
+echo "Stopping jenkins service"
+systemctl stop jenkins
+echo "Removing jenkins directories and files"
 rm -rf $JENKINS_HOME
 rm -rf $JENKINS_LOG_DIR
 rm -rf $JENKINS_WAR_DIR

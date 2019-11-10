@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export OS=$(uname -s)
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 function jenkins_cli_setup {
     echo -e "\e[92mDownloading jenkins-cli jar from jenkins server\e[0m"
@@ -26,7 +27,7 @@ EOF
 }
 
 function install_plugins () {
-    pluginfile=$(pwd)/$1
+    pluginfile="$DIR/plugins.txt"
 
     if [ ! -d '/usr/local/bin' ]; then
         mkdir -p /usr/local/bin
@@ -56,11 +57,6 @@ function install_dependencies () {
         fi
     done
 }
-
-if [ "$EUID" -ne 0 ]; then
-    echo "Please run script as root"
-    exit
-fi
 
 if [ $OS != "Linux" ]; then
     echo "This script currently does not support $OS"
@@ -99,5 +95,5 @@ if [ ! -d '/var/lib/jenkins' ]; then
     jenkins_cli_setup
 fi
 
-install_plugins "$1"
+install_plugins 
 systemctl restart jenkins

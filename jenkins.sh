@@ -2,17 +2,20 @@
 
 #set -x
 function usage () {
-    echo "$(basename "$0") [-h] [-s n] -- a script to install jenkins locally using the latest war file
+    echo "$(basename "$0") [-h] [-i] [-u] -- a script to install jenkins locally using the latest war file
 
-    where:
-        -h  show this help text
-        -i  install jenkins
-        -u  uninstall jenkins installed using this script"
+where:
+    -h  show this help text
+    -i  install jenkins
+    -u  uninstall jenkins installed using this script"
 }
 
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run this script as root"
+    exit 1
+fi
 
-while getopts ':iuhs:' option; do
-    echo $option
+while getopts ':iuh' option; do
   case "$option" in
     h) usage
        exit

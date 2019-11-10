@@ -92,7 +92,7 @@ if [ ! -d '/var/lib/jenkins' ]; then
     systemctl daemon-reload
     
     systemctl start jenkins
-    jenkins_cli_setup
+    #jenkins_cli_setup
 fi
 
 install_plugins 

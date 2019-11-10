@@ -105,4 +105,5 @@ fi
 
 install_plugins 
 casc_setup
+chown -R jenkins:jenkins $JENKINS_HOME
 systemctl restart jenkins

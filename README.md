@@ -4,9 +4,15 @@ This script will install a local Jenkins server, and install plugins specified i
 
 ### Usage:
 
+Installing:
 ```
-sudo ./jenkins_install.sh plugins.txt
+sudo ./jenkins.sh -i 
 ```
 
+Uninstalling:
+
+```
+sudo ./jenkins.sh -u
+```
 ## Future:
 This repository will contain the currently present local installation as well as a Docker based install.

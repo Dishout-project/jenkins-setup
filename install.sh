@@ -14,7 +14,7 @@ function casc_setup () {
     CASC_F=$DIR/files/casc.yaml
     sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" <$CASC_F > $JENKINS_HOME/casc_configs/casc.yaml 
     chown -R jenkins:jenkins $JENKINS_HOME/casc_configs
-    CASC_JENKINS_CONFIG=$JENKINS_HOME/casc_configs/casc.yaml
+    export CASC_JENKINS_CONFIG=$JENKINS_HOME/casc_configs/casc.yaml
 }
 
 function generate_service_file() {

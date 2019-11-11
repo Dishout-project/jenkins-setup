@@ -94,7 +94,6 @@ if [ ! -d '/var/lib/jenkins' ]; then
     curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
     chown -R jenkins:jenkins $JENKINS_WAR_DIR
     mkdir -p $JENKINS_HOME
-    chown -R jenkins:jenkins $JENKINS_HOME
 
     echo "Creating jenkins casc file and directory"
     casc_setup
@@ -103,8 +102,6 @@ if [ ! -d '/var/lib/jenkins' ]; then
     generate_service_file
     systemctl daemon-reload
     
-    #systemctl start jenkins
-    #jenkins_cli_setup
 fi
 
 install_plugins 

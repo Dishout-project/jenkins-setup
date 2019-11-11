@@ -26,6 +26,7 @@ Description=Jenkins
 [Service]
 User=jenkins
 WorkingDirectory=$JENKINS_WAR_DIR
+Environment=CASC_JENKINS_CONFIG=$CASC_JENKINS_CONFIG
 ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENKINS_HOME -jar $JENKINS_WAR --httpPort=$JENKINS_PORT --logfile=$JENKINS_LOG
 
 [Install]
@@ -94,16 +95,18 @@ if [ ! -d '/var/lib/jenkins' ]; then
     chown -R jenkins:jenkins $JENKINS_WAR_DIR
     mkdir -p $JENKINS_HOME
     chown -R jenkins:jenkins $JENKINS_HOME
-    
+
+    echo "Creating jenkins casc file and directory"
+    casc_setup
+
     echo "Creating systemd service"
     generate_service_file
     systemctl daemon-reload
     
-    systemctl start jenkins
+    #systemctl start jenkins
     #jenkins_cli_setup
 fi
 
 install_plugins 
-casc_setup
 chown -R jenkins:jenkins $JENKINS_HOME
-systemctl restart jenkins
+systemctl start jenkins

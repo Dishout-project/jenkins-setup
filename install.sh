@@ -9,6 +9,14 @@ function jenkins_cli_setup {
     curl localhost:8080/jnlpJars/jenkins-cli.jar -o jenkins-cli.jar
 }
 
+function casc_setup () {
+    mkdir $JENKINS_HOME/casc_configs
+    CASC_F=$DIR/files/casc.yaml
+    sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" <$CASC_F > $JENKINS_HOME/casc_configs/casc.yaml 
+    chown -R jenkins:jenkins $JENKINS_HOME/casc_configs
+    export CASC_JENKINS_CONFIG=$JENKINS_HOME/casc_configs/casc.yaml
+}
+
 function generate_service_file() {
     # generates systemd service file for jenkins
 cat << EOF > /etc/systemd/system/jenkins.service
@@ -18,7 +26,8 @@ Description=Jenkins
 [Service]
 User=jenkins
 WorkingDirectory=$JENKINS_WAR_DIR
-ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENKINS_HOME -jar $JENKINS_WAR --httpPort=$HTTP_PORT --logfile=$JENKINS_LOG
+Environment=CASC_JENKINS_CONFIG=$CASC_JENKINS_CONFIG
+ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENKINS_HOME -jar $JENKINS_WAR --httpPort=$JENKINS_PORT --logfile=$JENKINS_LOG
 
 [Install]
 WantedBy=multi.user.target
@@ -85,15 +94,16 @@ if [ ! -d '/var/lib/jenkins' ]; then
     curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
     chown -R jenkins:jenkins $JENKINS_WAR_DIR
     mkdir -p $JENKINS_HOME
-    chown -R jenkins:jenkins $JENKINS_HOME
-    
+
+    echo "Creating jenkins casc file and directory"
+    casc_setup
+
     echo "Creating systemd service"
     generate_service_file
     systemctl daemon-reload
     
-    systemctl start jenkins
-    #jenkins_cli_setup
 fi
 
 install_plugins 
-systemctl restart jenkins
+chown -R jenkins:jenkins $JENKINS_HOME
+systemctl start jenkins

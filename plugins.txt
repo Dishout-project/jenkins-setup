@@ -54,6 +54,7 @@ handlebars:latest
 icon-shim:latest
 jackson2-api:latest
 javadoc:latest
+job-dsl:latest
 jquery-detached:latest
 junit:latest
 kerberos-sso:latest

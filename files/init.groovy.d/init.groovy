@@ -12,7 +12,7 @@ def keyFileContents = new File("/var/lib/jenkins/.ssh/id_rsa").text
 def privateKey = new BasicSSHUserPrivateKey(
   CredentialsScope.GLOBAL,
   "github-key",
-  "root",
+  "jenkins",
   new BasicSSHUserPrivateKey.DirectEntryPrivateKeySource(keyFileContents),
   "",
   "SSH key for shared-library"

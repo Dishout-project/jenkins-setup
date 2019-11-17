@@ -10,6 +10,7 @@ function jenkins_cli_setup {
 }
 
 function casc_setup () {
+    echo "Creating jenkins casc file and directory"
     mkdir $JENKINS_HOME/casc_configs
     CASC_F=$DIR/files/casc.yaml
     sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" -e "s|JENKINS_HOME|$JENKINS_HOME|" <$CASC_F > $JENKINS_HOME/casc_configs/casc.yaml 
@@ -32,6 +33,7 @@ Description=Jenkins
 [Service]
 User=jenkins
 WorkingDirectory=$JENKINS_WAR_DIR
+Environment=JENKINS_HOME=$JENKINS_HOME
 Environment=CASC_JENKINS_CONFIG=$CASC_JENKINS_CONFIG
 ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENKINS_HOME -jar $JENKINS_WAR --httpPort=$JENKINS_PORT --logfile=$JENKINS_LOG
 
@@ -39,6 +41,12 @@ ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENK
 WantedBy=multi.user.target
 EOF
 
+}
+
+function generate_ssh_keys() {
+    echo "Creating ssh keys"
+    mkdir -p $JENKINS_HOME/.ssh
+    ssh-keygen -N "" -f $JENKINS_HOME/.ssh/id_rsa
 }
 
 function install_plugins () {
@@ -101,8 +109,8 @@ if [ ! -d '/var/lib/jenkins' ]; then
     chown -R jenkins:jenkins $JENKINS_WAR_DIR
     mkdir -p $JENKINS_HOME
     
+    generate_ssh_keys
     seed_job
-    echo "Creating jenkins casc file and directory"
     casc_setup
 
     echo "Creating systemd service"

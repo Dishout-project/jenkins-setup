@@ -111,6 +111,8 @@ if [ ! -d '/var/lib/jenkins' ]; then
     mkdir -p $JENKINS_HOME
     
     generate_ssh_keys
+    #copy init script directory to JENKINS_HOME
+    cp -R $DIR/files/init.groovy.d $JENKINS_HOME
     seed_job
     casc_setup
 

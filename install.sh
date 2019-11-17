@@ -12,9 +12,15 @@ function jenkins_cli_setup {
 function casc_setup () {
     mkdir $JENKINS_HOME/casc_configs
     CASC_F=$DIR/files/casc.yaml
-    sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" <$CASC_F > $JENKINS_HOME/casc_configs/casc.yaml 
+    sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" -e "s/JENKINS_HOME/$JENKINS_HOME/" <$CASC_F > $JENKINS_HOME/casc_configs/casc.yaml 
     chown -R jenkins:jenkins $JENKINS_HOME/casc_configs
     export CASC_JENKINS_CONFIG=$JENKINS_HOME/casc_configs/casc.yaml
+}
+
+function seed_job () {
+    echo "Creating initial seed job interface"
+    mkdir -p $JENKINS_HOME/dslScripts/
+    cp $DIR/files/initSeedJob.groovy $JENKINS_HOME/dslScripts/
 }
 
 function generate_service_file() {
@@ -94,7 +100,8 @@ if [ ! -d '/var/lib/jenkins' ]; then
     curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
     chown -R jenkins:jenkins $JENKINS_WAR_DIR
     mkdir -p $JENKINS_HOME
-
+    
+    seed_job
     echo "Creating jenkins casc file and directory"
     casc_setup
 

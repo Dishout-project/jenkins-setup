@@ -87,4 +87,5 @@ tool:
     installations:
     - home: "git"
       name: "Default"
-
+jobs:
+    - file: JENKINS_HOME/dslScripts/initSeedJob.groovy

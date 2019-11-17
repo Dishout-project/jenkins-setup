@@ -12,7 +12,7 @@ function jenkins_cli_setup {
 function casc_setup () {
     mkdir $JENKINS_HOME/casc_configs
     CASC_F=$DIR/files/casc.yaml
-    sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" -e "s/JENKINS_HOME/$JENKINS_HOME/" <$CASC_F > $JENKINS_HOME/casc_configs/casc.yaml 
+    sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" -e "s|JENKINS_HOME|$JENKINS_HOME|" <$CASC_F > $JENKINS_HOME/casc_configs/casc.yaml 
     chown -R jenkins:jenkins $JENKINS_HOME/casc_configs
     export CASC_JENKINS_CONFIG=$JENKINS_HOME/casc_configs/casc.yaml
 }

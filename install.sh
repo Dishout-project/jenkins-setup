@@ -48,7 +48,7 @@ function generate_ssh_keys() {
     mkdir -p $JENKINS_HOME/.ssh
     chmod 700 $JENKINS_HOME/.ssh
     chown -R jenkins:jenkins $JENKINS_HOME/.ssh
-    su - jenkins -c "ssh-keygen -N \"\" -f $JENKINS_HOME/.ssh/id_rsa" 2>/dev/null
+    su - jenkins -c "ssh-keygen -N \"\" -f $JENKINS_HOME/.ssh/id_rsa"
 }
 
 function install_plugins () {
@@ -111,6 +111,8 @@ if [ ! -d '/var/lib/jenkins' ]; then
     chown -R jenkins:jenkins $JENKINS_WAR_DIR
     mkdir -p $JENKINS_HOME
     
+
+    generate_ssh_keys
     #copy init script directory to JENKINS_HOME
     cp -R $DIR/files/init.groovy.d $JENKINS_HOME
     seed_job
@@ -124,5 +126,4 @@ fi
 
 install_plugins 
 chown -R jenkins:jenkins $JENKINS_HOME
-generate_ssh_keys
 systemctl start jenkins

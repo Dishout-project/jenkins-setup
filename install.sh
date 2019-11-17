@@ -46,6 +46,7 @@ EOF
 function generate_ssh_keys() {
     echo "Creating ssh keys"
     mkdir -p $JENKINS_HOME/.ssh
+    chmod 700 $JENKINS_HOME/.ssh
     ssh-keygen -N "" -f $JENKINS_HOME/.ssh/id_rsa
 }
 

@@ -1,4 +1,11 @@
 pipelineJob('Seed-Job'){
+      parameters {
+            gitParam('branch') {
+            type('BRANCH_TAG')
+            sortMode('ASCENDING_SMART')
+            defaultValue('origin/master')
+        }
+    }
     definition {
         cpsScm {
             scm {
@@ -7,7 +14,7 @@ pipelineJob('Seed-Job'){
                         github("Nightmayr/jenkins-shared-library", "ssh")
                         credentials("github-key")
                     }
-                    branch("master")
+                    branch('$branch')
                 }
         }
             scriptPath('resources/init/seedJob.groovy')

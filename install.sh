@@ -2,6 +2,7 @@
 
 export OS=$(uname -s)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $DIR/files/setenv.sh
 
 function jenkins_cli_setup {
     echo -e "\e[92mDownloading jenkins-cli jar from jenkins server\e[0m"
@@ -96,7 +97,7 @@ fi
 if [ ! -d '/var/lib/jenkins' ]; then
     install_dependencies
     
-    source files/setenv.sh
+    #source files/setenv.sh
     echo "Creating jenkins user"
     useradd jenkins && usermod --shell /bin/bash jenkins
     usermod -a -G jenkins jenkins

@@ -126,4 +126,6 @@ fi
 
 install_plugins 
 chown -R jenkins:jenkins $JENKINS_HOME
+echo "\e[92madd ssh key to github\e[0m"
+cat $JENKINS_HOME/.ssh/id_rsa.pub
 systemctl start jenkins

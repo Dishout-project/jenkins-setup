@@ -1,7 +1,7 @@
 pipelineJob('Seed-Job'){
       parameters {
             gitParam('branch') {
-            type('BRANCH_TAG')
+            type('BRANCH')
             sortMode('ASCENDING_SMART')
             defaultValue('origin/master')
         }

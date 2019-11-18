@@ -3,6 +3,7 @@
 export OS=$(uname -s)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $DIR/files/setenv.sh
+NEW_INSTALL=true
 
 function jenkins_cli_setup {
     echo -e "\e[92mDownloading jenkins-cli jar from jenkins server\e[0m"
@@ -122,11 +123,14 @@ if [ ! -d '/var/lib/jenkins' ]; then
     echo "Creating systemd service"
     generate_service_file
     systemctl daemon-reload
-    
+else
+    $NEW_INSTALL=false
 fi
 
 install_plugins 
 chown -R jenkins:jenkins $JENKINS_HOME
-echo -e "\e[92mJenkins ssh public key:\e[0m"
-cat $JENKINS_HOME/.ssh/id_rsa.pub
+if [[ "$NEW_INSTALL" = true ]]; then
+    echo -e "\e[92mJenkins ssh public key:\e[0m"
+    cat $JENKINS_HOME/.ssh/id_rsa.pub
+fi
 systemctl start jenkins

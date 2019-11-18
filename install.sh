@@ -124,7 +124,7 @@ if [ ! -d '/var/lib/jenkins' ]; then
     generate_service_file
     systemctl daemon-reload
 else
-    $NEW_INSTALL=false
+    NEW_INSTALL=false
 fi
 
 install_plugins 

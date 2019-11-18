@@ -90,6 +90,7 @@ pipeline-stage-view:latest
 pipeline-utility-steps:latest
 plain-credentials:latest
 pubsub-light:latest
+rebuild:latest
 scm-api:latest
 script-security:latest
 sse-gateway:latest

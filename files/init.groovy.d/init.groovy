@@ -6,6 +6,7 @@ import com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey
 import com.cloudbees.plugins.credentials.CredentialsScope
 
 // Add deploy key for the centrally shared pipeline and configuration repository
+def env = System.getenv()
 def domain = Domain.global()
 def store = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
 // def keyFileContents = new File("/var/lib/jenkins/.ssh/id_rsa").text

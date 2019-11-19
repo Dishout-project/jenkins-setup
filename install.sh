@@ -2,7 +2,6 @@
 
 export OS=$(uname -s)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-source $DIR/files/setenv.sh
 NEW_INSTALL=true
 
 function jenkins_cli_setup {
@@ -98,7 +97,7 @@ fi
 if [ ! -d '/var/lib/jenkins' ]; then
     install_dependencies
     
-    #source files/setenv.sh
+    source $DIR/files/setenv.sh
     echo "Creating jenkins user"
     useradd jenkins && usermod --shell /bin/bash jenkins
     usermod -a -G jenkins jenkins
@@ -125,6 +124,7 @@ if [ ! -d '/var/lib/jenkins' ]; then
     systemctl daemon-reload
 else
     NEW_INSTALL=false
+    source $DIR/files/setenv.sh
 fi
 
 install_plugins 

@@ -35,6 +35,7 @@ git-changelog:latest
 git:latest
 git-client:latest
 git-server:latest
+git-parameter:latest
 ghprb:latest
 github:latest
 github-api:latest
@@ -54,6 +55,7 @@ handlebars:latest
 icon-shim:latest
 jackson2-api:latest
 javadoc:latest
+job-dsl:latest
 jquery-detached:latest
 junit:latest
 kerberos-sso:latest
@@ -88,6 +90,7 @@ pipeline-stage-view:latest
 pipeline-utility-steps:latest
 plain-credentials:latest
 pubsub-light:latest
+rebuild:latest
 scm-api:latest
 script-security:latest
 sse-gateway:latest

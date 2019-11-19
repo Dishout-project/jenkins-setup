@@ -9,7 +9,6 @@ import com.cloudbees.plugins.credentials.CredentialsScope
 def env = System.getenv()
 def domain = Domain.global()
 def store = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
-// def keyFileContents = new File("/var/lib/jenkins/.ssh/id_rsa").text
 def keyFileContents = new File("$env.JENKINS_HOME/.ssh/id_rsa").text
 def privateKey = new BasicSSHUserPrivateKey(
   CredentialsScope.GLOBAL,

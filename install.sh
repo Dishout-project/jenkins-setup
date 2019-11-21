@@ -99,7 +99,7 @@ if [ ! -d '/var/lib/jenkins' ]; then
     
     source $DIR/files/setenv.sh
     echo "Creating jenkins user"
-    useradd jenkins && usermod --shell /bin/bash jenkins
+    useradd -m -d $JENKINS_HOME jenkins && usermod --shell /bin/bash jenkins
     usermod -a -G jenkins jenkins
     mkdir -p $JENKINS_WAR_DIR
     chmod 755 $JENKINS_WAR_DIR

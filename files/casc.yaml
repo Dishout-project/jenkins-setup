@@ -50,20 +50,6 @@ security:
 unclassified:
   buildStepOperation:
     enabled: false
-  extendedEmailPublisher:
-    adminRequiredForTemplateTesting: false
-    allowUnregisteredEnabled: false
-    charset: "UTF-8"
-    debugMode: false
-    defaultBody: "$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:\r\n\r\nCheck\
-      \ console output at $BUILD_URL to view the results."
-    defaultContentType: "text/plain"
-    defaultSubject: "$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!"
-    maxAttachmentSize: -1
-    maxAttachmentSizeMb: 0
-    precedenceBulk: false
-    useSsl: false
-    watchingEnabled: false
   gitHubPluginConfig:
     hookUrl: "http://JENKINS_HOST:JENKINS_PORT/github-webhook/"
   gitSCM:

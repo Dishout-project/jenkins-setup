@@ -26,12 +26,16 @@ jenkins:
       allowsSignup: false
       enableCaptcha: false
       users:
-      - id: "admin"
-        password: "s4gh1r"
+      - id: "fortune"
+        password: "password1234"
       - id: "umayr"
         password: "nightmayr"
+      - id: "henry"
+        password: "password1234"
+      - id: "mabroor"
+        password: "password1234"
   slaveAgentPort: -1
-  systemMessage: "Umayr's Jenkins server"
+  systemMessage: "DishOut Jenkins server"
   updateCenter:
     sites:
     - id: "default"

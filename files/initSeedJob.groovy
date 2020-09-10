@@ -11,7 +11,7 @@ pipelineJob('Seed-Job'){
             scm {
                 git{
                     remote {
-                        github("Nightmayr/jenkins-shared-library", "ssh")
+                        github("Dishout-project/job-definitions", "ssh")
                         credentials("github-key")
                     }
                     branch('$branch')

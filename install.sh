@@ -72,7 +72,7 @@ function install_plugins () {
 
 function install_dependencies () {
     dependencies=(java wget unzip)
-    apt-get update
+    sudo apt-get update
     for dep in ${dependencies[@]}; do 
         if [ ! -x "$(command -v $dep)" ]; then
             echo "Installing pre-requisite: $dep"

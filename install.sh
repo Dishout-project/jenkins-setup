@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export OS=$(uname -s)
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )/jenkins-setup"
 NEW_INSTALL=true
 
 function jenkins_cli_setup {
@@ -12,22 +12,23 @@ function jenkins_cli_setup {
 
 function casc_setup () {
     echo "Creating jenkins casc file and directory"
-    mkdir $JENKINS_HOME/casc_configs
+    sudo mkdir $JENKINS_HOME/casc_configs
     CASC_F=$DIR/files/casc.yaml
-    sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" -e "s|JENKINS_HOME|$JENKINS_HOME|" <$CASC_F > $JENKINS_HOME/casc_configs/casc.yaml 
-    chown -R jenkins:jenkins $JENKINS_HOME/casc_configs
+    sudo sed -e "s/JENKINS_HOST/$JENKINS_HOST/" -e "s/JENKINS_PORT/$JENKINS_PORT/" -e "s|JENKINS_HOME|$JENKINS_HOME|" <$CASC_F > /tmp/casc.yaml 
+    sudo mv /tmp/casc.yaml $JENKINS_HOME/casc_configs/casc.yaml
+    sudo chown -R jenkins:jenkins $JENKINS_HOME/casc_configs
     export CASC_JENKINS_CONFIG=$JENKINS_HOME/casc_configs/casc.yaml
 }
 
 function seed_job () {
     echo "Creating initial seed job interface"
-    mkdir -p $JENKINS_HOME/dslScripts/
-    cp $DIR/files/initSeedJob.groovy $JENKINS_HOME/dslScripts/
+    sudo mkdir -p $JENKINS_HOME/dslScripts/
+    sudo cp $DIR/files/initSeedJob.groovy $JENKINS_HOME/dslScripts/
 }
 
 function generate_service_file() {
     # generates systemd service file for jenkins
-cat << EOF > /etc/systemd/system/jenkins.service
+sudo su -c "cat << EOF > /etc/systemd/system/jenkins.service
 [Unit]
 Description=Jenkins
 
@@ -40,46 +41,48 @@ ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENK
 
 [Install]
 WantedBy=multi.user.target
-EOF
+EOF"
 
 }
 
 function generate_ssh_keys() {
     echo "Creating ssh keys"
-    mkdir -p $JENKINS_HOME/.ssh
-    chmod 700 $JENKINS_HOME/.ssh
-    chown -R jenkins:jenkins $JENKINS_HOME/.ssh
-    su - jenkins -c "ssh-keygen -N \"\" -f $JENKINS_HOME/.ssh/id_rsa"
+    sudo mkdir -p $JENKINS_HOME/.ssh
+    sudo chmod 700 $JENKINS_HOME/.ssh
+    sudo chown -R jenkins:jenkins $JENKINS_HOME/.ssh
+    sudo su - jenkins -c "ssh-keygen -N \"\" -f $JENKINS_HOME/.ssh/id_rsa"
 }
 
 function install_plugins () {
     pluginfile="$DIR/plugins.txt"
 
     if [ ! -d '/usr/local/bin' ]; then
-        mkdir -p /usr/local/bin
+        sudo mkdir -p /usr/local/bin
     fi
     if [ ! -f /usr/local/bin/jenkins-support ] && [ ! -f /usr/local/bin/install-plugins.sh ]; then
-        curl -L https://raw.githubusercontent.com/jenkinsci/docker/master/install-plugins.sh -o /usr/local/bin/install-plugins.sh
-        curl -L https://raw.githubusercontent.com/jenkinsci/docker/master/jenkins-support -o /usr/local/bin/jenkins-support
-        chmod 700 /usr/local/bin/install-plugins.sh
-        chmod 700 /usr/local/bin/jenkins-support
+        # TODO: switch to jenkins-plugin-cli as install-plugins is deprecated
+        sudo mv $DIR/files/install-plugins.sh /usr/local/bin/install-plugins.sh
+        sudo mv $DIR/files/jenkins-support /usr/local/bin/jenkins-support
+        # sudo curl -L https://raw.githubusercontent.com/jenkinsci/docker/master/jenkins-support -o /usr/local/bin/jenkins-support
+        sudo chmod 700 /usr/local/bin/install-plugins.sh
+        sudo chmod 700 /usr/local/bin/jenkins-support
     fi
     
     echo -e "\e[92mInstalling plugins\e[0m"
-    /usr/local/bin/install-plugins.sh < $pluginfile
+    sudo /usr/local/bin/install-plugins.sh < $pluginfile
     
 }
 
 function install_dependencies () {
     dependencies=(java wget unzip)
-    sudo apt-get update
+    sudo apt update
     for dep in ${dependencies[@]}; do 
         if [ ! -x "$(command -v $dep)" ]; then
             echo "Installing pre-requisite: $dep"
             if [ $dep == 'java' ]; then
-                apt-get install -y openjdk-8-jdk
+                sudo apt install -y openjdk-8-jdk
             fi
-            apt-get install -y $dep
+            sudo apt install -y $dep
         fi
     done
 }
@@ -99,38 +102,40 @@ if [ ! -d '/var/lib/jenkins' ]; then
     
     source $DIR/files/setenv.sh
     echo "Creating jenkins user"
-    useradd -m -d $JENKINS_HOME jenkins && usermod --shell /bin/bash jenkins
-    usermod -a -G jenkins jenkins
-    mkdir -p $JENKINS_WAR_DIR
-    chmod 755 $JENKINS_WAR_DIR
-    mkdir -p $JENKINS_LOG_DIR
-    touch $JENKINS_LOG_DIR/jenkins.log
-    chown -R jenkins:jenkins $JENKINS_LOG_DIR
+    sudo useradd -m -d $JENKINS_HOME jenkins && usermod --shell /bin/bash jenkins
+    sudo usermod -a -G jenkins jenkins
+    sudo mkdir -p $JENKINS_WAR_DIR
+    sudo chmod 755 $JENKINS_WAR_DIR
+    sudo mkdir -p $JENKINS_LOG_DIR
+    sudo touch $JENKINS_LOG_DIR/jenkins.log
+    sudo chown -R jenkins:jenkins $JENKINS_LOG_DIR
 
     echo "Downloading latest jenkins.war"
-    curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
-    chown -R jenkins:jenkins $JENKINS_WAR_DIR
-    mkdir -p $JENKINS_HOME
+    sudo curl -L http://updates.jenkins-ci.org/latest/jenkins.war -o $JENKINS_WAR
+    sudo chown -R jenkins:jenkins $JENKINS_WAR_DIR
+    sudo mkdir -p $JENKINS_HOME
     
 
     generate_ssh_keys
     #copy init script directory to JENKINS_HOME
-    cp -R $DIR/files/init.groovy.d $JENKINS_HOME
+    sudo cp -R $DIR/files/init.groovy.d $JENKINS_HOME
     seed_job
     casc_setup
 
     echo "Creating systemd service"
     generate_service_file
-    systemctl daemon-reload
+    sudo systemctl daemon-reload
 else
     NEW_INSTALL=false
     source $DIR/files/setenv.sh
 fi
 
 install_plugins 
-chown -R jenkins:jenkins $JENKINS_HOME
+sudo chown -R jenkins:jenkins $JENKINS_HOME
 if [[ "$NEW_INSTALL" = true ]]; then
     echo -e "\e[92mJenkins ssh public key:\e[0m"
-    cat $JENKINS_HOME/.ssh/id_rsa.pub
+    sudo cat $JENKINS_HOME/.ssh/id_rsa.pub
 fi
-systemctl start jenkins
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+

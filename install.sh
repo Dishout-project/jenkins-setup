@@ -145,3 +145,6 @@ sudo systemctl start jenkins
 
 sleep 40
 
+# Moving plugins from REF directory
+sudo mv /usr/share/jenkins/ref/plugins/*.jpi $JENKINS_HOME/plugins
+sudo chown -R jenkins:jenkins $JENKINS_HOME

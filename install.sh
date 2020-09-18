@@ -131,8 +131,6 @@ else
 fi
 
 install_plugins 
-# Moving plugins from REF directory
-sudo mv /usr/share/jenkins/ref/plugins/*.jpi $JENKINS_HOME/plugins
 sudo chown -R jenkins:jenkins $JENKINS_HOME
 
 if [[ "$NEW_INSTALL" = true ]]; then

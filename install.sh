@@ -131,11 +131,17 @@ else
 fi
 
 install_plugins 
+# Moving plugins from REF directory
+sudo mv /usr/share/jenkins/ref/plugins/*.jpi $JENKINS_HOME/plugins
 sudo chown -R jenkins:jenkins $JENKINS_HOME
+
 if [[ "$NEW_INSTALL" = true ]]; then
     echo -e "\e[92mJenkins ssh public key:\e[0m"
     sudo cat $JENKINS_HOME/.ssh/id_rsa.pub
 fi
-sudo systemctl start jenkins
+
 sudo systemctl enable jenkins
+sudo systemctl start jenkins
+
+sleep 40
 

@@ -40,7 +40,7 @@ Environment=CASC_JENKINS_CONFIG=$CASC_JENKINS_CONFIG
 ExecStart=$JAVA_HOME -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=$JENKINS_HOME -jar $JENKINS_WAR --httpPort=$JENKINS_PORT --logfile=$JENKINS_LOG
 
 [Install]
-WantedBy=multi.user.target
+WantedBy=multi-user.target
 EOF"
 
 }
